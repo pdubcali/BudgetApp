@@ -1,17 +1,15 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import LineItem from './components/LineItem/LineItem';
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
-import blue from '@material-ui/core/colors/blue';
+import React from "react"
+import "./App.css"
+import LineItem from "./components/LineItem/LineItem"
+import { createTheme, ThemeProvider } from "@material-ui/core/styles"
 
 const theme = createTheme({
   palette: {
-    type: "dark",
-  },
-});
+    type: "dark"
+  }
+})
 
-function App() {
+function App () {
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
@@ -22,7 +20,7 @@ function App() {
       </div>
     </ThemeProvider>
 
-  );
+  )
 }
 
-export default App;
+export default App
