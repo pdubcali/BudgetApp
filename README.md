@@ -1,2 +1,2 @@
 # BudgetApp
-An app to make create a budget easy
+An app to make creating a budget easy
