@@ -26,19 +26,23 @@ const useStyles = makeStyles((theme: Theme) =>
 const LineItem = () => {
   const classes = useStyles()
   const [itemName, setItemName] = React.useState<string>("")
-  const [itemAmount, setItemAmount] = React.useState<number>(0)
+  const [itemAmount, setItemAmount] = React.useState<string>("")
   // const [date, setDate] = React.useState<Date | null>()
 
-  const handleAmountChange = (amount: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setItemAmount(Number(e.currentTarget.value))
+  const handleAmountChange = (amount: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setItemAmount(e.currentTarget.value)
   }
   const handleItemChange = (item: string) => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setItemName(e.currentTarget.value)
   }
   const handleSubmit = (e: { preventDefault: () => void }) => {
-    const lineItem = { itemName: itemName, itemAmount: itemAmount }
+    const lineItem = { itemName: itemName, itemAmount: parseFloat(itemAmount) }
 
-    axios.post("http://localhost:8080/lineItem", JSON.stringify(lineItem)
+    axios.post("http://localhost:8080/lineItem", JSON.stringify(lineItem), {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
     ).then(res => {
       console.log("response: ", res)
     }).catch(err => {
