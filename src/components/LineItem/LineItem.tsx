@@ -1,73 +1,116 @@
-import clsx from "clsx"
 import "./lineItem.css"
-import SaveIcon from "@material-ui/icons/Save"
-import { createStyles, FormControl, IconButton, InputAdornment, InputLabel, makeStyles, OutlinedInput, TextField, Theme } from "@material-ui/core"
+import SaveIcon from "@mui/icons-material/Save"
+import {IconButton, InputAdornment, TextField} from "@mui/material"
 import React from "react"
-import axios from "axios"
+import {DatePicker} from "@mui/x-date-pickers/DatePicker"
+import {
+  createTheme,
+  ThemeProvider,
+  experimental_sx as sx,
+} from "@mui/material/styles";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers"
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: "flex",
-      flexWrap: "wrap",
-      "& > *": {
-        margin: theme.spacing(1)
+const customTheme = createTheme({
+  spacing: 2,
+  components: {
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: sx({
+          color: "grey.500"
+        })
       }
     },
-    margin: {
-      margin: theme.spacing(1)
+    MuiTextField: {
+      styleOverrides: {
+        root: sx({
+          m:2,
+          "& .MuiOutlinedInput-root": {
+            "& > fieldset": {
+              borderColor: "grey.500",
+            },
+            "& .MuiTypography-root": {
+              color: "grey.500",
+            }
+          },
+          "& .MuiOutlinedInput-root:hover": {
+            "& > fieldset": {
+              borderColor: "grey.300",
+            },
+          },
+          "& .MuiFormLabel-root": {
+            color: "grey.500",
+          },
+          "& .MuiSvgIcon-root": {
+            color: "grey.500",
+          },
+        }),
+      },
     },
-    textField: {
-      width: "25ch"
-    }
-  })
-)
+  },
+})
 
 const LineItem = () => {
-  const classes = useStyles()
   const [itemName, setItemName] = React.useState<string>("")
   const [itemAmount, setItemAmount] = React.useState<string>("")
-  // const [date, setDate] = React.useState<Date | null>()
+  const [dueDate, setDueDate] = React.useState<Date | null>(null);
 
-  const handleAmountChange = (amount: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAmountChange = () => (e: React.ChangeEvent<HTMLInputElement>) => {
     setItemAmount(e.currentTarget.value)
   }
-  const handleItemChange = (item: string) => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleItemChange = () => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setItemName(e.currentTarget.value)
   }
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    const lineItem = { itemName: itemName, itemAmount: parseFloat(itemAmount) }
+  const handleSubmit = () => {
+    const lineItem = { itemName: itemName, itemAmount: parseFloat(itemAmount), date: dueDate }
 
-    axios.post("http://localhost:8080/lineItem", JSON.stringify(lineItem), {
+    fetch("http://localhost:8080/lineItem", {
+      method: "POST",
       headers: {
-        "Content-Type": "application/json"
-      }
-    }
-    ).then(res => {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(lineItem)
+    }).then(res => {
       console.log("response: ", res)
     }).catch(err => {
       console.log("error: ", err)
     })
+
   }
 
-  // const saveItem = (item: string, amount: string) => (axios.post("http://localhost:8080/lineItem"))
-
   return (
-    <div className={classes.root}>
-      <TextField className={classes.textField} id="item" value={itemName} onChange={handleItemChange(itemName)} label="Item" variant="outlined"/>
-      <FormControl fullWidth className={clsx(classes.margin, classes.textField)} variant="outlined">
-        <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
-        <OutlinedInput
-          id="outlined-adornment-amount"
+    <div className="new-item-input">
+      <ThemeProvider theme={customTheme}>
+        <TextField
+          id="outlined"
+          value={itemName}
+          onChange={handleItemChange()}
+          label="Item"
+          variant="outlined"/>
+
+        <TextField
+          label="Amount"
+          id="outlined-start-adornment"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
           value={itemAmount}
-          onChange={handleAmountChange(itemAmount)}
-          startAdornment={<InputAdornment position="start">$</InputAdornment>}
-          labelWidth={60}
+          onChange={handleAmountChange()}
         />
-      </FormControl>
-      <IconButton onClick={handleSubmit}>
-        <SaveIcon />
-      </IconButton>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="Due Date"
+            value={dueDate}
+            onChange={(newValue) => {
+              setDueDate(newValue)
+            }}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+        <IconButton onClick={handleSubmit}>
+          <SaveIcon className="save-icon"/>
+        </IconButton>
+      </ThemeProvider>
 
     </div>)
 }
