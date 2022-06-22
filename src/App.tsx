@@ -1,6 +1,7 @@
 import React from "react"
 import "./App.css"
-import LineItem from "./components/LineItem/LineItem"
+import LineItemInput from "./components/LineItem/LineItemInput"
+import ItemTable from "./components/ItemTable/ItemTable";
 
 
 function App () {
@@ -9,7 +10,8 @@ function App () {
       <div className="App">
         <header className="App-header">
           Budget App
-          <LineItem />
+          <LineItemInput />
+          <ItemTable/>
         </header>
       </div>
 

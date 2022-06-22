@@ -50,7 +50,7 @@ const customTheme = createTheme({
   },
 })
 
-const LineItem = () => {
+const LineItemInput = () => {
   const [itemName, setItemName] = React.useState<string>("")
   const [itemAmount, setItemAmount] = React.useState<string>("")
   const [dueDate, setDueDate] = React.useState<Date | null>(null);
@@ -75,6 +75,9 @@ const LineItem = () => {
     }).catch(err => {
       console.log("error: ", err)
     })
+    setDueDate(null)
+    setItemAmount("")
+    setItemName("")
 
   }
 
@@ -115,4 +118,4 @@ const LineItem = () => {
     </div>)
 }
 
-export default LineItem
+export default LineItemInput
